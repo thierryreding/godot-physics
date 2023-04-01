@@ -1,0 +1,58 @@
+[gd_scene load_steps=6 format=3 uid="uid://offbfcoxqah1"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fsyir"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_0q4ge"]
+sky_material = SubResource("ProceduralSkyMaterial_fsyir")
+
+[sub_resource type="Environment" id="Environment_12eld"]
+background_mode = 1
+sky = SubResource("Sky_0q4ge")
+tonemap_mode = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_42ow4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1gj87"]
+
+[node name="World" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_12eld")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0.436286, -0.410187, 0.800875, -0.244242, 0.802649, 0.54415, 0, 0, 0)
+shadow_enabled = true
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_42ow4")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="StaticBody3D"]
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("BoxShape3D_1gj87")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="RigidBody3D"]
+
+[node name="Generic6DOFJoint3D" type="Generic6DOFJoint3D" parent="."]
+node_a = NodePath("../StaticBody3D")
+node_b = NodePath("../RigidBody3D")
+linear_limit_z/enabled = false
+linear_limit_z/upper_distance = 5.0
+linear_limit_z/lower_distance = -5.0
+linear_motor_z/enabled = true
+linear_motor_z/target_velocity = 10.0
+linear_motor_z/force_limit = 10.0
+angular_spring_z/stiffness = 100.0
+angular_spring_z/damping = 10.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 2, 2)
