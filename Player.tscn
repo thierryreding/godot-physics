@@ -1,0 +1,76 @@
+[gd_scene load_steps=6 format=3 uid="uid://bm0cj1co2r77m"]
+
+[ext_resource type="Script" path="res://Player.gd" id="1_wt2hd"]
+[ext_resource type="Texture2D" uid="uid://duae7l6p1wp8q" path="res://assets/crosshair-pack/PNG/White Retina/crosshair121.png" id="2_cs255"]
+[ext_resource type="Texture2D" uid="uid://l787qouksoec" path="res://assets/crosshair-pack/PNG/White Retina/crosshair001.png" id="3_dfyby"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_pl0ky"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_p3db8"]
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_wt2hd")
+
+[node name="HUD" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="HUD"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_cs255")
+
+[node name="TextureRect" type="TextureRect" parent="HUD/TextureRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_dfyby")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_pl0ky")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_p3db8")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+
+[node name="RayCast3D" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, 0, -5)
+debug_shape_custom_color = Color(1, 0, 1, 1)
+
+[node name="Hand" type="StaticBody3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Joint" type="Generic6DOFJoint3D" parent="Head/Hand"]
+node_a = NodePath("..")
+angular_limit_x/softness = 0.01
+angular_limit_y/softness = 0.01
+angular_limit_z/softness = 0.01

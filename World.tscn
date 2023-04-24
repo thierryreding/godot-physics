@@ -1,4 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://offbfcoxqah1"]
+[gd_scene load_steps=14 format=3 uid="uid://offbfcoxqah1"]
+
+[ext_resource type="Material" uid="uid://darhdxaddjd2" path="res://materials/static.tres" id="1_1bu5t"]
+[ext_resource type="Script" path="res://RigidBody3D.gd" id="1_pu4d1"]
+[ext_resource type="Material" uid="uid://vcbm1eg8s51r" path="res://materials/rigid.tres" id="3_bidt8"]
+[ext_resource type="Material" uid="uid://2uwluha1q51e" path="res://materials/floor.tres" id="3_olsoc"]
+[ext_resource type="PackedScene" uid="uid://bm0cj1co2r77m" path="res://Player.tscn" id="5_jhp1l"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fsyir"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -8,51 +14,211 @@ ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 sky_material = SubResource("ProceduralSkyMaterial_fsyir")
 
 [sub_resource type="Environment" id="Environment_12eld"]
-background_mode = 1
+background_mode = 2
 sky = SubResource("Sky_0q4ge")
 tonemap_mode = 2
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_42ow4"]
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_1gj87"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_42ow4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ayqko"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_34ic4"]
+size = Vector3(1, 0.5, 0.5)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_mbg4p"]
+height = 1.0
+radius = 0.25
+
 [node name="World" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_12eld")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866025, -0.433013, 0.25, 0.436286, -0.410187, 0.800875, -0.244242, 0.802649, 0.54415, 0, 0, 0)
-shadow_enabled = true
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 2.5, 5)
+current = true
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8, 0)
 metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-shape = SubResource("BoxShape3D_42ow4")
+[node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
+use_collision = true
+size = Vector3(32, 1, 32)
+material = ExtResource("3_olsoc")
 
-[node name="CSGBox3D" type="CSGBox3D" parent="StaticBody3D"]
+[node name="Linear Motor Test" type="Node3D" parent="."]
 
-[node name="RigidBody3D" type="RigidBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+[node name="RigidBody3D" type="RigidBody3D" parent="Linear Motor Test"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2)
+script = ExtResource("1_pu4d1")
 metadata/_edit_group_ = true
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Linear Motor Test/RigidBody3D"]
 shape = SubResource("BoxShape3D_1gj87")
 
-[node name="CSGBox3D" type="CSGBox3D" parent="RigidBody3D"]
+[node name="CSGBox3D" type="CSGBox3D" parent="Linear Motor Test/RigidBody3D"]
+material = ExtResource("3_bidt8")
 
-[node name="Generic6DOFJoint3D" type="Generic6DOFJoint3D" parent="."]
+[node name="Generic6DOFJoint3D" type="Generic6DOFJoint3D" parent="Linear Motor Test"]
 node_a = NodePath("../StaticBody3D")
 node_b = NodePath("../RigidBody3D")
-linear_limit_z/enabled = false
-linear_limit_z/upper_distance = 5.0
-linear_limit_z/lower_distance = -5.0
+linear_limit_z/upper_distance = 2.0
+linear_limit_z/lower_distance = -2.0
 linear_motor_z/enabled = true
-linear_motor_z/target_velocity = 10.0
+linear_motor_z/target_velocity = 1.0
 linear_motor_z/force_limit = 10.0
+linear_spring_z/stiffness = 10.0
+linear_spring_z/damping = 1.0
+linear_spring_z/equilibrium_point = -2.0
 angular_spring_z/stiffness = 100.0
 angular_spring_z/damping = 10.0
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 2, 2)
+[node name="StaticBody3D" type="StaticBody3D" parent="Linear Motor Test"]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Linear Motor Test/StaticBody3D"]
+shape = SubResource("BoxShape3D_42ow4")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Linear Motor Test/StaticBody3D"]
+material = ExtResource("1_1bu5t")
+
+[node name="Pin Joint Test" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+
+[node name="Anchor" type="StaticBody3D" parent="Pin Joint Test"]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pin Joint Test/Anchor"]
+shape = SubResource("BoxShape3D_42ow4")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Pin Joint Test/Anchor"]
+material = ExtResource("1_1bu5t")
+
+[node name="Body" type="RigidBody3D" parent="Pin Joint Test"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -3)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Pin Joint Test/Body"]
+material = ExtResource("3_bidt8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pin Joint Test/Body"]
+shape = SubResource("BoxShape3D_ayqko")
+
+[node name="PinJoint3D" type="PinJoint3D" parent="Pin Joint Test"]
+node_b = NodePath("../Body")
+
+[node name="Interaction Test" type="Node3D" parent="."]
+
+[node name="Player" parent="Interaction Test" instance=ExtResource("5_jhp1l")]
+
+[node name="Lever" type="Node3D" parent="Interaction Test"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.23325, 0)
+
+[node name="Generic6DOFJoint3D" type="Generic6DOFJoint3D" parent="Interaction Test/Lever"]
+node_a = NodePath("../Base")
+node_b = NodePath("../Handle")
+linear_limit_x/softness = 0.01
+linear_limit_y/softness = 0.01
+linear_limit_z/softness = 0.01
+angular_limit_z/upper_angle = 0.785398
+angular_limit_z/lower_angle = -0.785398
+
+[node name="Base" type="StaticBody3D" parent="Interaction Test/Lever"]
+
+[node name="Mesh" type="CSGBox3D" parent="Interaction Test/Lever/Base"]
+size = Vector3(1, 0.5, 0.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interaction Test/Lever/Base"]
+shape = SubResource("BoxShape3D_34ic4")
+
+[node name="Handle" type="RigidBody3D" parent="Interaction Test/Lever"]
+
+[node name="Pivot" type="Node3D" parent="Interaction Test/Lever/Handle"]
+
+[node name="Mesh" type="CSGCylinder3D" parent="Interaction Test/Lever/Handle/Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+radius = 0.125
+height = 1.0
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="Interaction Test/Lever/Handle/Pivot/Mesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+radius = 0.25
+rings = 8
+smooth_faces = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interaction Test/Lever/Handle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("CylinderShape3D_mbg4p")
+
+[node name="PhysicsCube" type="RigidBody3D" parent="Interaction Test"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -5.20857, 2)
+script = ExtResource("1_pu4d1")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interaction Test/PhysicsCube"]
+shape = SubResource("BoxShape3D_1gj87")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Interaction Test/PhysicsCube"]
+material = ExtResource("3_bidt8")
+
+[node name="Angular Motor Test" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+
+[node name="Anchor" type="StaticBody3D" parent="Angular Motor Test"]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Angular Motor Test/Anchor"]
+shape = SubResource("BoxShape3D_42ow4")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Angular Motor Test/Anchor"]
+material = ExtResource("1_1bu5t")
+
+[node name="Body" type="RigidBody3D" parent="Angular Motor Test"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+script = ExtResource("1_pu4d1")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Angular Motor Test/Body"]
+shape = SubResource("BoxShape3D_1gj87")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Angular Motor Test/Body"]
+material = ExtResource("3_bidt8")
+
+[node name="Generic6DOFJoint3D" type="Generic6DOFJoint3D" parent="Angular Motor Test"]
+node_a = NodePath("../Anchor")
+node_b = NodePath("../Body")
+angular_limit_x/enabled = false
+angular_motor_x/enabled = true
+angular_motor_x/target_velocity = 1.0
+
+[node name="Hinge Joint Test" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -4)
+
+[node name="Anchor" type="StaticBody3D" parent="Hinge Joint Test"]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge Joint Test/Anchor"]
+shape = SubResource("BoxShape3D_42ow4")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Hinge Joint Test/Anchor"]
+material = ExtResource("1_1bu5t")
+
+[node name="Body" type="RigidBody3D" parent="Hinge Joint Test"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Hinge Joint Test/Body"]
+material = ExtResource("3_bidt8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hinge Joint Test/Body"]
+shape = SubResource("BoxShape3D_ayqko")
+
+[node name="HingeJoint3D" type="HingeJoint3D" parent="Hinge Joint Test"]
+node_a = NodePath("../Anchor")
+node_b = NodePath("../Body")
+motor/enable = true
